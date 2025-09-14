@@ -44,6 +44,8 @@ runner:
       cpu: 2
       memory: 4Gi
 
+certManagerEnabled: true
+
 autoscaling:
   enabled: false
 
