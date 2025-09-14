@@ -1,0 +1,47 @@
+# Example values for development environment
+github:
+  appId: "123456"
+  installationId: "12345678"
+  privateKey: "LS0tLS1CRUdJTi..." # Replace with your base64 encoded private key
+  owner: "your-organization"
+  repository: "your-development-repo"
+
+runner:
+  replicas: 1
+  image:
+    repository: summerwind/actions-runner
+    tag: "latest"
+    pullPolicy: Always
+  
+  labels:
+    - "self-hosted"
+    - "linux"
+    - "x64"
+    - "development"
+    - "itl-runner"
+  
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2
+      memory: 4Gi
+
+autoscaling:
+  enabled: false
+
+serviceAccount:
+  create: true
+
+rbac:
+  create: true
+
+monitoring:
+  enabled: false
+
+networkPolicy:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false

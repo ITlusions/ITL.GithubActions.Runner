@@ -1,0 +1,142 @@
+# Default values for github-actions-runner.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Global configuration
+global:
+  # -- Global image registry
+  imageRegistry: ""
+  # -- Global image pull secrets
+  imagePullSecrets: []
+
+# Actions Runner Controller dependency
+actions-runner-controller:
+  enabled: true
+  # The controller will be installed as a dependency
+  # Configure controller-specific values here if needed
+
+# GitHub configuration
+github:
+  # -- GitHub App ID for authentication
+  appId: ""
+  # -- GitHub App Installation ID
+  installationId: ""
+  # -- GitHub App private key (base64 encoded)
+  privateKey: ""
+  # -- GitHub organization or repository owner
+  owner: ""
+  # -- GitHub repository name (optional, for repository-level runners)
+  repository: ""
+  # -- GitHub Enterprise URL (for GitHub Enterprise Server)
+  enterpriseURL: ""
+
+# Runner configuration
+runner:
+  # -- Number of runner replicas
+  replicas: 2
+  # -- Runner image repository
+  image:
+    repository: summerwind/actions-runner
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  
+  # -- Runner labels for targeting specific jobs
+  labels:
+    - "self-hosted"
+    - "linux"
+    - "x64"
+    - "itl-runner"
+  
+  # -- Runner group (GitHub Enterprise feature)
+  group: ""
+  
+  # -- Maximum number of jobs that can be run on the runner
+  ephemeral: true
+  
+  # -- Resource requests and limits
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2
+      memory: 4Gi
+  
+  # -- Node selector for runner pods
+  nodeSelector: {}
+  
+  # -- Tolerations for runner pods
+  tolerations: []
+  
+  # -- Affinity for runner pods
+  affinity: {}
+  
+  # -- Additional environment variables
+  env: []
+  
+  # -- Volume mounts for runner pods
+  volumeMounts: []
+  
+  # -- Volumes for runner pods
+  volumes: []
+  
+  # -- Security context for runner pods
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+
+# Horizontal Pod Autoscaler configuration
+autoscaling:
+  # -- Enable HPA for runners
+  enabled: false
+  # -- Minimum number of replicas
+  minReplicas: 1
+  # -- Maximum number of replicas
+  maxReplicas: 10
+  # -- Target CPU utilization percentage
+  targetCPUUtilizationPercentage: 80
+  # -- Target memory utilization percentage
+  targetMemoryUtilizationPercentage: 80
+
+# Service Account configuration
+serviceAccount:
+  # -- Create service account
+  create: true
+  # -- Service account annotations
+  annotations: {}
+  # -- Service account name
+  name: ""
+
+# RBAC configuration
+rbac:
+  # -- Create RBAC resources
+  create: true
+
+# Pod Security Policy configuration
+podSecurityPolicy:
+  # -- Create Pod Security Policy
+  create: false
+
+# Monitoring configuration
+monitoring:
+  # -- Enable monitoring
+  enabled: false
+  # -- Prometheus ServiceMonitor
+  serviceMonitor:
+    enabled: false
+    namespace: ""
+    labels: {}
+    annotations: {}
+
+# Network Policy configuration
+networkPolicy:
+  # -- Enable Network Policy
+  enabled: false
+
+# Pod Disruption Budget configuration
+podDisruptionBudget:
+  # -- Enable PDB
+  enabled: false
+  # -- Minimum available pods
+  minAvailable: 1

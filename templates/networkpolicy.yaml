@@ -1,0 +1,38 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "github-actions-runner.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "github-actions-runner.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "github-actions-runner.selectorLabels" . | nindent 6 }}
+  policyTypes:
+  - Ingress
+  - Egress
+  egress:
+  # Allow DNS resolution
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+  # Allow HTTPS to GitHub
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 443
+  # Allow HTTP for package downloads
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 80
+  # Allow communication within namespace
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: {{ .Release.Namespace }}
+  ingress: []
+{{- end }}

@@ -1,0 +1,38 @@
+{{- if .Values.rbac.create -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ include "github-actions-runner.fullname" . }}
+  labels:
+    {{- include "github-actions-runner.labels" . | nindent 4 }}
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "configmaps", "secrets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get", "list"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "github-actions-runner.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "github-actions-runner.labels" . | nindent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "github-actions-runner.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ include "github-actions-runner.fullname" . }}
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

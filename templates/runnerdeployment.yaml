@@ -1,0 +1,62 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: {{ include "github-actions-runner.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "github-actions-runner.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.runner.replicas }}
+  template:
+    spec:
+      {{- if .Values.github.repository }}
+      repository: {{ .Values.github.owner }}/{{ .Values.github.repository }}
+      {{- else }}
+      organization: {{ .Values.github.owner }}
+      {{- end }}
+      {{- if .Values.github.group }}
+      group: {{ .Values.github.group }}
+      {{- end }}
+      labels:
+        {{- toYaml .Values.runner.labels | nindent 8 }}
+      ephemeral: {{ .Values.runner.ephemeral }}
+      image: {{ include "github-actions-runner.image" . }}
+      imagePullPolicy: {{ .Values.runner.image.pullPolicy }}
+      {{- if .Values.runner.resources }}
+      resources:
+        {{- toYaml .Values.runner.resources | nindent 8 }}
+      {{- end }}
+      {{- if .Values.runner.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.runner.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.runner.tolerations }}
+      tolerations:
+        {{- toYaml .Values.runner.tolerations | nindent 8 }}
+      {{- end }}
+      {{- if .Values.runner.affinity }}
+      affinity:
+        {{- toYaml .Values.runner.affinity | nindent 8 }}
+      {{- end }}
+      {{- if .Values.runner.securityContext }}
+      securityContext:
+        {{- toYaml .Values.runner.securityContext | nindent 8 }}
+      {{- end }}
+      {{- if .Values.runner.env }}
+      env:
+        {{- toYaml .Values.runner.env | nindent 8 }}
+      {{- end }}
+      {{- if .Values.runner.volumeMounts }}
+      volumeMounts:
+        {{- toYaml .Values.runner.volumeMounts | nindent 8 }}
+      {{- end }}
+      {{- if .Values.runner.volumes }}
+      volumes:
+        {{- toYaml .Values.runner.volumes | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "github-actions-runner.serviceAccountName" . }}
+      {{- if or .Values.github.appId .Values.github.privateKey }}
+      githubAPICredentialsFrom:
+        secretRef:
+          name: {{ include "github-actions-runner.secretName" . }}
+      {{- end }}

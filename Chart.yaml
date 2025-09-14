@@ -1,0 +1,23 @@
+apiVersion: v2
+name: github-actions-runner
+description: A Helm chart for GitHub Actions Runner with Actions Runner Controller dependency
+version: 0.1.0
+appVersion: "latest"
+home: https://github.com/actions-runner-controller/actions-runner-controller
+sources:
+  - https://github.com/actions-runner-controller/actions-runner-controller
+maintainers:
+  - name: ITL Team
+    email: devops@itl.nl
+keywords:
+  - github
+  - actions
+  - runner
+  - ci
+  - cd
+
+dependencies:
+  - name: actions-runner-controller
+    version: "0.23.7"
+    repository: "https://actions-runner-controller.github.io/actions-runner-controller"
+    condition: actions-runner-controller.enabled

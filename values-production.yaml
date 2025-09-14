@@ -1,0 +1,61 @@
+# Example values for production deployment
+github:
+  appId: "123456"
+  installationId: "12345678"
+  privateKey: "LS0tLS1CRUdJTi..." # Replace with your base64 encoded private key
+  owner: "your-organization"
+  repository: "your-repository" # Remove this line for organization-wide runners
+
+runner:
+  replicas: 3
+  image:
+    repository: summerwind/actions-runner
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  
+  labels:
+    - "self-hosted"
+    - "linux"
+    - "x64"
+    - "production"
+    - "itl-runner"
+  
+  resources:
+    requests:
+      cpu: 1
+      memory: 2Gi
+    limits:
+      cpu: 4
+      memory: 8Gi
+  
+  nodeSelector:
+    node-type: "runner"
+  
+  env:
+    - name: RUNNER_WORKDIR
+      value: "/tmp/runner"
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+
+serviceAccount:
+  create: true
+  annotations:
+    # Add any annotations needed for your environment
+
+rbac:
+  create: true
+
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+
+networkPolicy:
+  enabled: true
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1

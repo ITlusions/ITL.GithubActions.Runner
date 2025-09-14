@@ -1,0 +1,31 @@
+1. Get the application URL by running these commands:
+{{- if .Values.github.repository }}
+  Repository-scoped runner deployed for: {{ .Values.github.owner }}/{{ .Values.github.repository }}
+{{- else }}
+  Organization-scoped runner deployed for: {{ .Values.github.owner }}
+{{- end }}
+
+2. Check the status of your runners:
+  kubectl get runnerdeployments -n {{ .Release.Namespace }}
+  kubectl get runners -n {{ .Release.Namespace }}
+
+3. View runner logs:
+  kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/name={{ include "github-actions-runner.name" . }}
+
+4. Scale your runners:
+  kubectl scale runnerdeployment {{ include "github-actions-runner.fullname" . }} --replicas=<desired-count> -n {{ .Release.Namespace }}
+
+{{- if .Values.autoscaling.enabled }}
+5. Check autoscaler status:
+  kubectl get horizontalrunnerautoscaler -n {{ .Release.Namespace }}
+{{- end }}
+
+{{- if not .Values.github.appId }}
+⚠️  WARNING: GitHub App credentials are not configured. Please set:
+  - github.appId
+  - github.installationId  
+  - github.privateKey
+{{- end }}
+
+For more information on configuring GitHub Apps for authentication, see:
+https://github.com/actions-runner-controller/actions-runner-controller/blob/master/docs/authenticating-to-the-github-api.md
